@@ -1,0 +1,95 @@
+ansible-playbook update_service.yml --check
+ansible-playbook configure_database.yml --check --diff
+ansible-playbook --syntax-check configure_database.yml
+ansible-lint database_setup.yml
+
+
+---
+- name: Setup apache
+  hosts: webserver
+  tasks:
+    - name: install httpd
+      yum:
+        name: httpd
+        state: installed
+
+- name: Setup tomcat
+  hosts: appserver
+  tasks:
+    - name: install httpd
+      yum:
+        name: tomcat
+        state: installed
+
+
+[webserver]
+web1
+web2
+[appserver]
+app1
+app2
+app3
+
+ansible-playbook update_service.yml --check
+ansible-playbook configure_database.yml --check --diff
+ansible-playbook --syntax-check configure_database.yml
+ansible-lint database_setup.yml
+
+===============
+
+- hosts: all
+  tasks:
+    - name: Install a new package
+      apt:
+        name: new_package
+        state: present
+
+    - name: Update the service
+      service:
+        name: my_service
+        state: restarted
+
+    - name: Check service status
+      service:
+        name: my_service
+        state: started
+
+
+Let's suppose you have already ran this playbook on your server. Now, once you run this playbook in check mode against same server, which tasks would result in changed status?
+
+
+A. Install a new package
+B. Update the service
+C. Check service status
+D. All of the tasks
+
+
+In the provided sample playbook update_service.yml, there are three tasks:
+
+
+A. Install a new package
+B. Update the service
+C. Check service status
+
+When update_service.yml playbook is already ran on a server and we try to run it again in check mode against same server, Ansible will indicate which tasks would result in changed status.
+
+The task Install a new package would not be marked as changed because it's just ensuring the package is present and that was already installed on the server from earlier execution(s).
+
+The task Update the service would be marked as changed because restarting a service is a change in state.
+
+The task Check service status would not be marked as changed since it's only verifying the service's state, and previous task has already started it.
+
+Therefore, the tasks that would result in changed status is:
+Update the service
+
+=============
+
+---
+- name: 'Execute two commands on localhost'
+  hosts: localhost
+  become: yes
+  tasks:
+     - name: 'Execute a date command'
+       command: date
+     - name: 'Task to display nameservers'
+       command: 'cat /etc/resolv.conf'
